@@ -37,7 +37,7 @@ try {
     $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
     //Attachments
-    $mail->addAttachment($path, 'constraint.txt'); 
+    //$mail->addAttachment($path, 'constraint.txt'); 
 
     $mail->send();
     echo 'Message has been sent';
