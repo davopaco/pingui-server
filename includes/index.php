@@ -13,6 +13,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     $subject = $_POST['subject'];
     $body = $_POST['body'];
     $file_type = $_POST['file_type'];
+    $time_code = $_POST['time_code'];
 }else{
     die("The method is ".$_SERVER['REQUEST_METHOD']." There was a problem with the POST method. Check GameMaker code, error logs and access logs for more information.");
 }
@@ -46,11 +47,11 @@ try {
     $log_contents = base64_decode($log_base64);
 
 // Append the log data to the log file
-    $log_file = fopen("/var/www/html/PINGUI-SERVER/".$file_type, "w") or die("There is a problem");
+    $log_file = fopen("/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type, "w") or die("There is a problem");
     fwrite($log_file, $log_contents);
     fclose($log_file);
     //Attachments
-    $mail->addAttachment("/var/www/html/PINGUI-SERVER/gamedata.json", 'feed.json'); 
+    $mail->addAttachment("/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type, $file_type); 
 
     $mail->send();
     echo 'Message has been sent';
