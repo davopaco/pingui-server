@@ -3,6 +3,7 @@
 require __DIR__.'/PHPMailer.php';
 require __DIR__.'/Exception.php';
 require __DIR__.'/SMTP.php';
+include 'connection.php';
 
 #Define name spaces
 use PHPMailer\PHPMailer\PHPMailer;
@@ -34,8 +35,9 @@ try {
 
     //Recipients
     $mail->setFrom('pingui.feedback@gmail.com', 'Feedback');
-    $mail->addAddress('pingui.feedback@gmail.com', 'Pingui');
-    $mail->addAddress('santicarivera@gmail.com', 'Santiago Pingui Developer');  
+    foreach($conn->query("SELECT NOMBRE, CORREO FROM USUARIOS, USUARIOS_has_CARGOS WHERE USUARIOS.ID=USUARIOS_has_CARGOS.USUARIOS_ID AND USUARIOS_has_CARGOS.CARGOS_ID=1") as $row){
+        $mail->addAddress($row['CORREO'], $row['NOMBRE']);
+    }
 
     //Content
     $mail->isHTML(true);                                 
