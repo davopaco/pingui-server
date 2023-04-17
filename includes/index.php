@@ -52,6 +52,16 @@ try {
     $log_file = fopen("/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type, "w") or die("There is a problem");
     fwrite($log_file, $log_contents);
     fclose($log_file);
+
+//SQL Query
+    $tipo_feed="";
+    if($file_type=="errors.log"){
+        $tipo_feed="2";
+    }elseif($file_type=="feed.log"){
+        $tipo_feed="1";
+    }
+    $conn->query("INSERT INTO FEED (ID, UBICACION, CREACION, TIPO_FEED_ID) VALUES (".$time_code.", /var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type.", NULL, ".$tipo_feed.")");
+
     //Attachments
     $mail->addAttachment("/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type, $file_type); 
 
