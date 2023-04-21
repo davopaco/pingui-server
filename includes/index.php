@@ -42,10 +42,8 @@ try {
 
     //Recipients
     $mail->setFrom('pingui.feedback@gmail.com', 'Feedback');
-    foreach($conn->query("SELECT U.NOMBRE, U.CORREO, TF.ID FROM USUARIOS U, USUARIOS_has_CARGOS UC, TIPO_FEED_has_CARGOS TFC, CARGOS C, TIPO_FEED TF WHERE U.ID=UC.USUARIOS_ID AND C.ID=UC.CARGOS_ID AND TF.ID=TFC.TIPO_FEED_ID AND TFC.CARGOS_ID=UC.CARGOS_ID") as $row){
-        if($row['ID']==$tipo_feed){
-            $mail->addAddress($row['CORREO'], $row['NOMBRE']);
-        }
+    foreach($conn->query("SELECT U.NOMBRE, U.CORREO, TF.ID FROM USUARIOS U, USUARIOS_has_CARGOS UC, TIPO_FEED_has_CARGOS TFC, CARGOS C, TIPO_FEED TF WHERE U.ID=UC.USUARIOS_ID AND C.ID=UC.CARGOS_ID AND TF.ID=TFC.TIPO_FEED_ID AND TFC.CARGOS_ID=UC.CARGOS_ID AND TF.ID=".$tipo_feed) as $row){
+        $mail->addAddress($row['CORREO'], $row['NOMBRE']);
     }
 
     //Content
