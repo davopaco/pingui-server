@@ -23,6 +23,13 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
 $mail = new PHPMailer(true);
 
 try {
+    //Choose tipo_feed depending on what was received on POST request.
+    $tipo_feed=0;
+    if($file_type=="errors.log"){
+        $tipo_feed=2;
+    }elseif($file_type=="feed.log"){
+        $tipo_feed=1;
+    }
     //Server settings
     $mail->SMTPDebug = SMTP::DEBUG_SERVER;                 
     $mail->isSMTP();                                          
@@ -35,8 +42,10 @@ try {
 
     //Recipients
     $mail->setFrom('pingui.feedback@gmail.com', 'Feedback');
-    foreach($conn->query("SELECT NOMBRE, CORREO FROM USUARIOS, USUARIOS_has_CARGOS WHERE USUARIOS.ID=USUARIOS_has_CARGOS.USUARIOS_ID AND USUARIOS_has_CARGOS.CARGOS_ID=1") as $row){
-        $mail->addAddress($row['CORREO'], $row['NOMBRE']);
+    foreach($conn->query("SELECT U.NOMBRE, U.CORREO, TF.ID FROM USUARIOS U, USUARIOS_has_CARGOS UC, TIPO_FEED_has_CARGOS TFC, CARGOS C, TIPO_FEED TF WHERE U.ID=UC.USUARIOS_ID AND C.ID=UC.CARGOS_ID AND TF.ID=TFC.TIPO_FEED_ID AND TFC.CARGOS_ID=UC.CARGOS_ID") as $row){
+        if($row['ID']==$tipo_feed){
+            $mail->addAddress($row['CORREO'], $row['NOMBRE']);
+        }
     }
 
     //Content
@@ -55,12 +64,6 @@ try {
 
 //SQL Query
     $location = "/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type;
-    $tipo_feed=0;
-    if($file_type=="errors.log"){
-        $tipo_feed=2;
-    }elseif($file_type=="feed.log"){
-        $tipo_feed=1;
-    }
     $sql = "INSERT INTO FEED (ID, UBICACION, CREACION, TIPO_FEED_ID) VALUES (?, ?, NULL, ?)";
     $stmt = $conn->prepare($sql);
     $stmt ->execute([$time_code, $location, $tipo_feed]);
