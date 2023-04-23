@@ -15,12 +15,15 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     $body = $_POST['body'];
     $file_type = $_POST['file_type'];
     $time_code = $_POST['time_code'];
+    $headers = apache_request_headers();
+    $passphrase="ArCaycHarlixCxfeatpiNgui99$"
 }else{
     die("The method is ".$_SERVER['REQUEST_METHOD']." There was a problem with the POST method. Check GameMaker code, error logs and access logs for more information.");
 }
 
 //Create an instance; passing `true` enables exceptions
 $mail = new PHPMailer(true);
+$passphrase_decoded="";
 
 try {
     //Choose tipo_feed depending on what was received on POST request.
@@ -30,6 +33,23 @@ try {
     }elseif($file_type=="feed.log"){
         $tipo_feed=1;
     }
+
+    //Verify the authentication header through base64 decode
+    $auth_header=$headers['Authorization'];
+    if(!isset($auth_header)){
+        http_response_code(401);
+        die("No está autorizadx para hacer este request!");
+    }
+    if(strpos($auth_header, 'basic ') !== 0){
+        http_response_code(401);
+        die("No está autorizadx para hacer este request!");
+    }
+    $passphrase_decoded=base64_decode(substr($auth_header, 6));
+    if($passphrase!==$passphrase_decoded){
+        http_response_code(401);
+        die("No está autorizadx para hacer este request!");
+    }
+    
     //Server settings
     $mail->SMTPDebug = SMTP::DEBUG_SERVER;                 
     $mail->isSMTP();                                          
@@ -70,8 +90,8 @@ try {
     $mail->addAttachment("/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type, $file_type); 
 
     $mail->send();
-    echo 'Message has been sent';
+    echo 'El mensaje ha sido enviado!';
 } catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    echo "El mensaje no se pudo enviar. Mailer Error: {$mail->ErrorInfo}";
 }
 ?>
