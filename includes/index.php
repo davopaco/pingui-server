@@ -16,7 +16,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'){
     $file_type = $_POST['file_type'];
     $time_code = $_POST['time_code'];
     $headers = apache_request_headers();
-    $passphrase="ArCaycHarlixCxfeatpiNgui99$"
+    $passphrase="ArCaycHarlixCxfeatpiNgui99$";
 }else{
     die("The method is ".$_SERVER['REQUEST_METHOD']." There was a problem with the POST method. Check GameMaker code, error logs and access logs for more information.");
 }
