@@ -76,18 +76,23 @@ try {
     $log_contents = base64_decode($log_base64);
 
 // Append the log data to the log file
-    $log_file = fopen("/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type, "w") or die("There is a problem");
+    $i=1;
+    $filename ="/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type;
+    while(file_exists($filename)){
+        $filename.=strval($i);
+        $i+=1;
+    }
+    $log_file = fopen($filename, "w") or die("There is a problem");
     fwrite($log_file, $log_contents);
     fclose($log_file);
 
 //SQL Query
-    $location = "/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type;
     $sql = "INSERT INTO FEED (ID, UBICACION, CREACION, TIPO_FEED_ID) VALUES (?, ?, NULL, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt ->execute([$time_code, $location, $tipo_feed]);
+    $stmt ->execute([$time_code, $filename, $tipo_feed]);
 
     //Attachments
-    $mail->addAttachment("/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type, $file_type); 
+    $mail->addAttachment($filename, $file_type); 
 
     $mail->send();
     echo 'El mensaje ha sido enviado!';
