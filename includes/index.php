@@ -80,7 +80,7 @@ try {
     $filename ="/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type;
     while(file_exists($filename)){
         $time_code.=string($i);
-        $filename.=strval($i);
+        $filename ="/var/www/html/PINGUI-SERVER/log_files/".$time_code.$file_type;
         $i+=1;
     }
     $log_file = fopen($filename, "w") or die("There is a problem");
